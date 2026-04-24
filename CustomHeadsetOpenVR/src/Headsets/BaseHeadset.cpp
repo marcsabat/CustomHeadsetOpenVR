@@ -58,6 +58,9 @@ void BaseHeadsetShim::PosTrackedDeviceActivate(uint32_t &unObjectId, vr::EVRInit
 			case Config::HeadsetType::DreamAir:
 				folderName = "dreamair";
 				break;
+			case Config::HeadsetType::CrystalLight:
+				folderName = "crystallight";
+				break;
 		}
 		if(folderName != ""){
 			// update icons

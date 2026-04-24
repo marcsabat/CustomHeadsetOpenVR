@@ -20,22 +20,34 @@ ShimDisplayComponent::ShimDisplayComponent(ShimDefinition* shimDefinition, vr::I
 
 // shim the component function to also apply shims to components
 void *ShimTrackedDeviceDriver::GetComponent(const char *pchComponentNameAndVersion){
+	DriverLog("GetComponent called for: %s", pchComponentNameAndVersion);
+	DriverLog("shimActive: %s, shimDisplayComponent: %s", 
+		shimDefinition->shimActive ? "true" : "false",
+		shimDefinition->shimDisplayComponent ? "true" : "false");
+
 	void* returnValue = nullptr;
 	if(shimDefinition->shimActive){
 		if(!shimDefinition->PreTrackedDeviceGetComponent(pchComponentNameAndVersion, returnValue)){
+			DriverLog("PreTrackedDeviceGetComponent returned early with returnValue: %p", returnValue);
 			return returnValue;
 		}
 	}
 	// this may at some point need to load different shims depending on what the original returns
 	// but the MeganeX shim overwrites all of them so it is not currently a problem
 	if(strcmp(pchComponentNameAndVersion, vr::IVRDisplayComponent_Version) == 0 && shimDefinition->shimActive && shimDefinition->shimDisplayComponent){
+		DriverLog("Creating ShimDisplayComponent for display component request");
 		vr::IVRDisplayComponent* displayComponent = nullptr;
 		if(shimDefinition->trackedDevice){
 			displayComponent = (vr::IVRDisplayComponent*)shimDefinition->trackedDevice->GetComponent(pchComponentNameAndVersion);
+			DriverLog("Original display component from tracked device: %p", displayComponent);
 		}
 		returnValue = new ShimDisplayComponent(shimDefinition, displayComponent);
+		DriverLog("Returning ShimDisplayComponent: %p", returnValue);
 	}else if(shimDefinition->trackedDevice){
 		returnValue = shimDefinition->trackedDevice->GetComponent(pchComponentNameAndVersion);
+		DriverLog("Returning component from original tracked device: %p", returnValue);
+	}else{
+		DriverLog("No shimDisplayComponent or trackedDevice, returning nullptr");
 	}
 	if(shimDefinition->shimActive){
 		shimDefinition->PosTrackedDeviceGetComponent(pchComponentNameAndVersion, returnValue);

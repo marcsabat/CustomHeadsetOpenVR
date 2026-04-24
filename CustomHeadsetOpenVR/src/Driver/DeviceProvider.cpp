@@ -8,6 +8,7 @@
 
 #include "../Headsets/MeganeX8K.h"
 #include "../Headsets/DreamAir.h"
+#include "../Headsets/CrystalLight.h"
 #include "../Headsets/GenericHeadset.h"
 #include "../Headsets/FakeHeadset.h"
 
@@ -16,38 +17,64 @@
 
 // general driver functions
 vr::EVRInitError CustomHeadsetDeviceProvider::Init(vr::IVRDriverContext *pDriverContext){
+	DriverLog("=== CustomHeadsetDeviceProvider::Init START ===");
+
 	// initialise this driver
+	DriverLog("Initializing VR driver context...");
 	VR_INIT_SERVER_DRIVER_CONTEXT(pDriverContext);
+
+	DriverLog("Getting resource paths...");
 	char driverPath[2048];
 	vr::VRResources()->GetResourceFullPath("", "", driverPath, sizeof(driverPath));
 	driverConfigLoader.info.steamvrResources = driverPath;
+	DriverLog("SteamVR resources path: %s", driverPath);
+
 	vr::VRResources()->GetResourceFullPath("{CustomHeadsetOpenVR}", "", driverPath, sizeof(driverPath));
 	driverConfigLoader.info.driverResources = driverPath;
+	DriverLog("Driver resources path: %s", driverPath);
+
+	DriverLog("Starting config loader...");
 	driverConfigLoader.Start();
+	DriverLog("Config loader started successfully");
+
 	// inject hooks into functions
+	DriverLog("Injecting hooks...");
 	InjectHooks(this, pDriverContext);
+	DriverLog("InjectHooks completed");
+
 	hidModifier.InjectHooks();
-	
+	DriverLog("HID modifier hooks injected");
+
 	// the shim classes can be used to implement entirely new headsets, not just shim existing ones
 	if(driverConfig.fakeHeadset.enable){
+		DriverLog("Fake headset enabled, creating device...");
 		FakeHeadset* fakeHeadsetImplementation = new FakeHeadset();
 		fakeHeadsetImplementation->deviceProvider = this;
 		shims.insert(fakeHeadsetImplementation);
 		vr::ITrackedDeviceServerDriver* driver = new ShimTrackedDeviceDriver(fakeHeadsetImplementation, nullptr);
 		vr::VRServerDriverHost()->TrackedDeviceAdded("FakeCustomHMD", vr::TrackedDeviceClass_HMD, driver);
+		DriverLog("Fake headset device added");
 	}
-	
+
+	DriverLog("=== CustomHeadsetDeviceProvider::Init COMPLETE - Returning VRInitError_None ===");
 	return vr::VRInitError_None;
 }
 const char *const *CustomHeadsetDeviceProvider::GetInterfaceVersions(){
+	DriverLog("CustomHeadsetDeviceProvider::GetInterfaceVersions called");
 	return vr::k_InterfaceVersions;
 }
 bool CustomHeadsetDeviceProvider::ShouldBlockStandbyMode(){
 	return false;
 }
-void CustomHeadsetDeviceProvider::Cleanup(){}
-void CustomHeadsetDeviceProvider::EnterStandby(){}
-void CustomHeadsetDeviceProvider::LeaveStandby(){}
+void CustomHeadsetDeviceProvider::Cleanup(){
+	DriverLog("CustomHeadsetDeviceProvider::Cleanup called");
+}
+void CustomHeadsetDeviceProvider::EnterStandby(){
+	DriverLog("CustomHeadsetDeviceProvider::EnterStandby called");
+}
+void CustomHeadsetDeviceProvider::LeaveStandby(){
+	DriverLog("CustomHeadsetDeviceProvider::LeaveStandby called");
+}
 
 void DebugEventLog(const vr::VREvent_t& vrevent){
 	DriverLog("Event type: %d", vrevent.eventType);
@@ -192,7 +219,14 @@ bool CustomHeadsetDeviceProvider::HandleDeviceAdded(const char *&pchDeviceSerial
 			shims.insert(dreamAirShim);
 			pDriver = new ShimTrackedDeviceDriver(dreamAirShim, pDriver);
 		}
-		
+
+		if(driverConfig.crystalLight.enable){
+			CrystalLightShim* crystalLightShim = new CrystalLightShim();
+			crystalLightShim->deviceProvider = this;
+			shims.insert(crystalLightShim);
+			pDriver = new ShimTrackedDeviceDriver(crystalLightShim, pDriver);
+		}
+
 		if(driverConfig.meganeX8K.enable){
 			MeganeX8KShim* meganeX8KShim = new MeganeX8KShim();
 			meganeX8KShim->deviceProvider = this;

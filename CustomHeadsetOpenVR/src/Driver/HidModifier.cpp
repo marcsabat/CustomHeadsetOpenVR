@@ -278,6 +278,18 @@ std::string HidModifier::ReadLighthouseConfig(HidDeviceInfo &info){
 			// {"device_class", "controller"}, 
 		};
 	}
+
+	if(driverConfig.crystalLight.enable) {
+		jsonOverrides["REF-HMD"] = { // Crystal Light
+			{"device", {
+				{"eye_target_height_in_pixels", 2880},
+				{"eye_target_width_in_pixels", 2880},
+			}},
+			{"direct_mode_edid_vid", 53826}, // PVR (same as Dream Air)
+			//{"direct_mode_edid_pid", 4121}, // Crystal Light specific product ID			
+		};
+	}
+
 	if(driverConfig.meganeX8K.enable){
 		jsonOverrides["MeganeX superlight 8K"] = {
 			{"device", {

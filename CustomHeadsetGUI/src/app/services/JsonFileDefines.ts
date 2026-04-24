@@ -13,6 +13,7 @@ export type DistortionProfileConfig = {
 export type Settings = {
   meganeX8K: MeganeX8KConfig,
   dreamAir: DreamAirConfig,
+  crystalLight: CrystalLightConfig,
   generalHeadset: GeneralHeadsetConfig,
   customShader: CustomShaderConfig,
   forceTracking: boolean,
@@ -103,10 +104,18 @@ export type BaseHeadsetConfig = {
   superSamplingFilterPercent: number;
   secondsFromVsyncToPhotons: number;
   secondsFromPhotonsToVblank: number;
+  displayRotation: number;
   eyeRotation: number;
   disableEye: number;
   disableEyeDecreaseFov: number;
+  directMode: boolean;
+  edidVendorId: number;
+  edidProductId: number;
   edidVendorIdOverride: number;
+  edidProductIdOverride: number;
+  dscVersion: number;
+  dscSliceCount: number;
+  dscBPPx16: number;
   hiddenArea: HiddenAreaMeshConfig;
   stationaryDimming: StationaryDimmingConfig;
   parallelProjection: boolean;
@@ -120,6 +129,10 @@ export type DreamAirConfig = BaseHeadsetConfig & {
   // DreamAir-specific fields can be added here if needed
 };
 
+export type CrystalLightConfig = BaseHeadsetConfig & {
+  // CrystalLight-specific fields can be added here if needed
+};
+
 export type GeneralHeadsetConfig = {
   useViveBluetooth: boolean;
 }
@@ -128,7 +141,7 @@ export type AppSetting = {
   colorScheme: 'system' | 'dark' | 'light';
   updateMode: 'replace' | 'rewrite';
   advanceMode: boolean;
-  defaultSettingsTab: 'auto' | 'General' | 'MeganeX8K' | 'DreamAir';
+  defaultSettingsTab: 'auto' | 'General' | 'MeganeX8K' | 'DreamAir' | 'CrystalLight';
 }
 
 export const HeadsetType = {
@@ -137,6 +150,7 @@ export const HeadsetType = {
   MeganeX8K: 2,
   Vive: 3,
   DreamAir: 4,
+  CrystalLight: 5,
 } as const;
 
 export type HeadsetType = typeof HeadsetType[keyof typeof HeadsetType];

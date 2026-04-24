@@ -179,6 +179,10 @@ void ConfigLoader::ParseConfig(){
 			json headsetData = data["dreamAir"];
 			parseBaseHeadsetConfig(headsetData, newConfig.dreamAir);
 		}
+		if (data["crystalLight"].is_object()) {
+			json headsetData = data["crystalLight"];
+			parseBaseHeadsetConfig(headsetData, newConfig.crystalLight);
+		}
 		if(data["generalHeadset"].is_object()){
 			json generalHeadsetData = data["generalHeadset"];
 			if(generalHeadsetData["useViveBluetooth"].is_boolean()){
@@ -439,6 +443,7 @@ void ConfigLoader::WriteInfo(){
 		{"defaultSettings", {
 			{"meganeX8K", baseHeadsetInfo(defaultSettings.meganeX8K)},
 			{"dreamAir", baseHeadsetInfo(defaultSettings.dreamAir)},
+			{"crystalLight", baseHeadsetInfo(defaultSettings.crystalLight)},
 			{"generalHeadset", {
 				{"useViveBluetooth", defaultSettings.generalHeadset.useViveBluetooth},
 			}},

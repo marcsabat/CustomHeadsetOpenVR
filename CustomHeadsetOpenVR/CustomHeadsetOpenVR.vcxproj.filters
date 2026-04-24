@@ -51,6 +51,9 @@
     <ClInclude Include="..\ThirdParty\zlib\zutil.h">
       <Filter>Source Files\zlib</Filter>
     </ClInclude>
+    <ClInclude Include="src\Headsets\CrystalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Driver\DeviceProvider.cpp">
@@ -144,6 +147,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Headsets\FakeHeadset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Headsets\PimaxCrystalLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

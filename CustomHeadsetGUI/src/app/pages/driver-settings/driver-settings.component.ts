@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, inject } from '@
 import { SystemReadyComponent } from '../../utilities/system-ready/system-ready.component';
 import { MeganexX8KComponent } from '../devices/meganex-x8-k/meganex-x8-k.component';
 import { DreamAirComponent } from '../devices/dream-air/dream-air.component';
+import { CrystalLightComponent } from '../devices/crystal-light/crystal-light.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { GeneralComponent } from '../devices/general/general.component';
 import { HeadsetType, HeadsetType as HeadsetTypeEnum } from '../../services/JsonFileDefines';
@@ -26,13 +27,14 @@ export interface TabConfig {
         SystemReadyComponent,
         MeganexX8KComponent,
         DreamAirComponent,
+        CrystalLightComponent,
         GeneralComponent,
         MatTabsModule,
         MatIconModule,
         MatButtonModule,
         CommonModule
     ],
-    providers: [MeganexX8KComponent, DreamAirComponent],
+    providers: [MeganexX8KComponent, DreamAirComponent, CrystalLightComponent],
     templateUrl: './driver-settings.component.html',
     styleUrl: './driver-settings.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -52,6 +54,7 @@ export class DriverSettingsComponent implements OnInit, OnDestroy {
     MeganexX8KComponent = MeganexX8KComponent;
     GeneralComponent = GeneralComponent;
     DreamAirComponent = DreamAirComponent;
+    CrystalLightComponent = CrystalLightComponent;
 
     constructor(private dis: DriverInfoService, private appSettingService: AppSettingService, public appUpdateService: AppUpdateService) {
         // Register tab configurations
@@ -59,6 +62,7 @@ export class DriverSettingsComponent implements OnInit, OnDestroy {
             { type: 'General', headsetType: HeadsetType.Other }, // Other
             { type: 'MeganeX8K', headsetType: HeadsetType.MeganeX8K }, // MeganeX8K
             { type: 'DreamAir', headsetType: HeadsetType.DreamAir }, // DreamAir
+            { type: 'CrystalLight', headsetType: HeadsetType.CrystalLight }, // Crystal Light
         ]);
 
         // Effect to update current headset type when driver info changes

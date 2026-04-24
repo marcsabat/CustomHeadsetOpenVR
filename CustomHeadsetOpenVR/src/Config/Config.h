@@ -110,6 +110,7 @@ public:
 		MeganeX8K = 2,
 		Vive = 3,
 		DreamAir = 4,
+		CrystalLight = 5,
 	};
 	
 	class BaseHeadsetConfig{
@@ -219,7 +220,21 @@ public:
 	};
 	// config for the Dream Air
 	DreamAirConfig dreamAir = {};
-	
+
+	class CrystalLightConfig : public BaseHeadsetConfig{
+		public:
+		CrystalLightConfig(){
+			headsetType = HeadsetType::CrystalLight;
+
+			distortionProfile = "Dream Air Default"; // TODO: generate a real distortion profile for the Crystal Light
+			maxFovY = 86;
+			edidVendorId = 53826;
+			displayRotation = 2;			
+		}
+	};
+	// config for the Crystal Light
+	CrystalLightConfig crystalLight = {};
+
 	class FakeHeadsetConfig : public BaseHeadsetConfig{
 		public:
 		FakeHeadsetConfig(){
