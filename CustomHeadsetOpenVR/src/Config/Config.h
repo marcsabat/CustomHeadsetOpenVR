@@ -229,7 +229,9 @@ public:
 			distortionProfile = "Dream Air Default"; // TODO: generate a real distortion profile for the Crystal Light
 			maxFovY = 86;
 			edidVendorId = 53826;
-			displayRotation = 2;			
+			displayRotation = 1;			
+			resolutionX = 2880;
+			resolutionY = 2880;
 		}
 	};
 	// config for the Crystal Light
