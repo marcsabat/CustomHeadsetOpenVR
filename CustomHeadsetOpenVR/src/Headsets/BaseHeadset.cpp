@@ -355,8 +355,8 @@ void BaseHeadsetShim::RunFrame(){
 	}
 	static int debugFrameCount = 0;
 	debugFrameCount++;
-	if(frameTime >= 1.0 / 100.0){
-		// only run a maximum of 100 times a second
+	if(frameTime >= 1.0 / 140.0){
+		// only run a maximum of 140 times a second
 		
 		vr::PropertyContainerHandle_t container = vr::VRProperties()->TrackedDeviceToPropertyContainer(0);
 	

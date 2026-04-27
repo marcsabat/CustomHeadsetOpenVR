@@ -44,7 +44,7 @@ struct StationaryDimmingConfig{
 };
 
 
-struct CustomShaderConfig{
+struct CustomShaderConfig {
 	// if shaders should be replaced in the compositor
 	bool enable = false;
 	bool enableForMeganeX8K = true;
@@ -94,13 +94,12 @@ struct CustomShaderConfig{
 	double samplingFilterLumaSharpenClamp = 0.1;
 	int samplingFilterLumaSharpenPattern = 1;
 	double samplingFilterLumaSharpenRadius = 1.0;
- 	// CAS filter parameters
- 	double samplingFilterCASStrength = 1.0;
- 	double samplingFilterCASContrast = 1.0;
+	// CAS filter parameters
+	double samplingFilterCASStrength = 1.0;
+	double samplingFilterCASContrast = 1.0;
 	// color multiplier for tint adjustments
-	ConfigColor colorMultiplier = {1.0, 1.0, 1.0};
+	ConfigColor colorMultiplier = { 1.0, 1.0, 1.0 };
 };
-
 
 class Config{
 public:
@@ -226,12 +225,20 @@ public:
 		CrystalLightConfig(){
 			headsetType = HeadsetType::CrystalLight;
 
-			distortionProfile = "Dream Air Default"; // TODO: generate a real distortion profile for the Crystal Light
-			maxFovY = 86;
+			distortionProfile = "Dream Air Default"; // TODO: generate a real distortion profile for the Crystal Light			
+			double maxFovX = 115.0;			
+			double maxFovY = 105.0;
 			edidVendorId = 53826;
 			displayRotation = 1;			
 			resolutionX = 2880;
 			resolutionY = 2880;
+
+			replaceIcons = false; // TODO: add custom icons for the Crystal Light, the default ones look very out of place with the headset's design
+			fovBurnInPrevention = false; // LCD panels, no burn in to worry about
+			parallelProjection = true; // Some sim games need it. Enabled by default.
+
+			eyeRotation = 7.2; // Needs some high value to prevent cross-eyed vision. Not sure if this is the correct way to do it, but it seems to work well enough.
+			secondsFromVsyncToPhotons = 0.0095; // Seems to look better with this value, but it might be placebo.
 		}
 	};
 	// config for the Crystal Light
