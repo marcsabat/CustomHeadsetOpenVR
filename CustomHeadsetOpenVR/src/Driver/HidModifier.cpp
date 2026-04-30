@@ -143,6 +143,13 @@ void HidModifier::AddDevice(hid_device* device){
 	HidDeviceInfo info;
 	info.device = device;
 	ReadLighthouseConfig(info);
+
+	// When config is empty give some time for Lighthouse to initialize properly (needed for Crystal Light at least)
+	if ((info.lighthouseDeviceManufacturer == "") && (info.lighthouseDeviceName == ""))
+	{ 
+		DriverLog("Added Pimax Crystal HID device, sleeping for 1s to allow Lighthouse to initialize. Device manufacturer: %s Device name: %s: ", info.lighthouseDeviceManufacturer.c_str(), info.lighthouseDeviceName.c_str());
+		Sleep(1000);
+	}	
 	
 	#ifdef PISTART
 	PISTART
