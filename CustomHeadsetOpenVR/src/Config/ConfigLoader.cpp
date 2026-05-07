@@ -56,6 +56,9 @@ void parseBaseHeadsetConfig(json headsetData, Config::BaseHeadsetConfig& headset
 	if(headsetData["subpixelShift"].is_number()){
 		headsetConfig.subpixelShift = headsetData["subpixelShift"].get<double>();
 	}
+	if(headsetData["subpixelOffsets"].is_array()){
+		headsetConfig.subpixelOffsets = headsetData["subpixelOffsets"].get<std::vector<double>>();
+	}
 	if(headsetData["resolutionX"].is_number()){
 		headsetConfig.resolutionX = headsetData["resolutionX"].get<int>();
 	}
@@ -197,6 +200,9 @@ void ConfigLoader::ParseConfig(){
 			if(customShaderData["enableForMeganeX8K"].is_boolean()){
 				newConfig.customShader.enableForMeganeX8K = customShaderData["enableForMeganeX8K"].get<bool>();
 			}
+			if(customShaderData["enableForDreamAir"].is_boolean()){
+				newConfig.customShader.enableForDreamAir = customShaderData["enableForDreamAir"].get<bool>();
+			}
 			if(customShaderData["enableForOther"].is_boolean()){
 				newConfig.customShader.enableForOther = customShaderData["enableForOther"].get<bool>();
 			}
@@ -244,6 +250,9 @@ void ConfigLoader::ParseConfig(){
 			}
 			if(customShaderData["srgbColorCorrection"].is_boolean()){
 				newConfig.customShader.srgbColorCorrection = customShaderData["srgbColorCorrection"].get<bool>();
+			}
+			if(customShaderData["srgbWhitePointCorrection"].is_boolean()){
+				newConfig.customShader.srgbWhitePointCorrection = customShaderData["srgbWhitePointCorrection"].get<bool>();
 			}
 			if(customShaderData["srgbColorCorrectionMatrix"].is_array()){
 				newConfig.customShader.srgbColorCorrectionMatrix = customShaderData["srgbColorCorrectionMatrix"].get<std::vector<double>>();
@@ -381,6 +390,7 @@ ordered_json baseHeadsetInfo(const Config::BaseHeadsetConfig& headsetConfig){
 		{"distortionZoom", headsetConfig.distortionZoom},
 		{"fovZoom", headsetConfig.fovZoom},
 		{"subpixelShift", headsetConfig.subpixelShift},
+		{"subpixelOffsets", headsetConfig.subpixelOffsets},
 		{"resolutionX", headsetConfig.resolutionX},
 		{"resolutionY", headsetConfig.resolutionY},
 		{"displayRotation", headsetConfig.displayRotation},
@@ -450,6 +460,7 @@ void ConfigLoader::WriteInfo(){
 			{"customShader", {
 				{"enable", defaultSettings.customShader.enable},
 				{"enableForMeganeX8K", defaultSettings.customShader.enableForMeganeX8K},
+				{"enableForDreamAir", defaultSettings.customShader.enableForDreamAir},
 				{"enableForOther", defaultSettings.customShader.enableForOther},
 				{"contrast", defaultSettings.customShader.contrast},
 				{"contrastMidpoint", defaultSettings.customShader.contrastMidpoint},
@@ -466,6 +477,7 @@ void ConfigLoader::WriteInfo(){
 				{"disableMuraCorrection", defaultSettings.customShader.disableMuraCorrection},
 				{"disableBlackLevels", defaultSettings.customShader.disableBlackLevels},
 				{"srgbColorCorrection", defaultSettings.customShader.srgbColorCorrection},
+				{"srgbWhitePointCorrection", defaultSettings.customShader.srgbWhitePointCorrection},
 				{"srgbColorCorrectionMatrix", defaultSettings.customShader.srgbColorCorrectionMatrix},
 				{"lensColorCorrection", defaultSettings.customShader.lensColorCorrection},
 				{"dither10Bit", defaultSettings.customShader.dither10Bit},

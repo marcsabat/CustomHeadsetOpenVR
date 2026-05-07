@@ -160,13 +160,39 @@ static std::map<Config::HeadsetType, std::vector<double>> srgbColorCorrectionMat
 		0.8224619687143621, 0.17753803128563772, 0.0, 
 		0.033194198850961636, 0.9668058011490385, -1.3877787807814457e-17, 
 		0.01708263072112004, 0.07239744066396342, 0.9105199286149167
+
 	}},
+	
+	// {Config::HeadsetType::DreamAir, {
+	// }},
 	{Config::HeadsetType::DreamAir, {
 		// convert sRGB into the section of the dci-p3 color space it occupies
-		// I have not verified that this is correct for the sony panels
+		0.7304695448285958, 0.2440673763281347, 0.025463078843269038,
+		0.03779320999796168, 0.9518287439140447, 0.010378046087993819,
+		0.01344114195073836, 0.0475204153264534, 0.9390384427228086
+	}},
+};
+
+
+// corrects to the official white point but results in a warmer image
+static std::map<Config::HeadsetType, std::vector<double>> srgbColorCorrectionWithWhiteMatrices = {
+	{Config::HeadsetType::MeganeX8K, {
+		// best guess for an official white point
+		// the data sheet list it as a mixture of infrared and ultraviolet
+		// convert sRGB into the section of the dci-p3 color space it occupies
 		0.8224619687143621, 0.17753803128563772, 0.0, 
 		0.033194198850961636, 0.9668058011490385, -1.3877787807814457e-17, 
 		0.01708263072112004, 0.07239744066396342, 0.9105199286149167
+
+	}},
+	
+	// {Config::HeadsetType::DreamAir, {
+	// }},
+	{Config::HeadsetType::DreamAir, {
+		// convert sRGB into the section of the dci-p3 color space it occupies
+		0.8086585139263373, 0.2701921842418791, 0.02818862968779734,
+		0.037776947709785444, 0.9514191752817748, 0.010373580450483824,
+		0.009672316745800479, 0.03419594187859908, 0.6757370235197377
 	}},
 };
 
@@ -223,7 +249,7 @@ Bytecode DistortionShader(bool muraCorrection = false, bool noDistortion = false
 	}
 	if(driverConfigLoader.info.connectedHeadset == Config::HeadsetType::DreamAir){
 		defines[definesCount++] = {"DREAMAIR", "1"};
-		if(driverConfig.customShader.subpixelShift){
+		if(driverConfig.customShader.subpixelShift && driverConfig.dreamAir.subpixelShift != 0 ){
 			defines[definesCount++] = {"SUBPIXEL_SHIFT_DREAMAIR", "1"};
 		}
 	}
@@ -300,8 +326,12 @@ Bytecode DistortionShader(bool muraCorrection = false, bool noDistortion = false
 	std::string colorMatrixString = "";
 	if(driverConfig.customShader.srgbColorCorrection){
 		std::vector<double>* colorMatrix = nullptr;
-		if(srgbColorCorrectionMatrices.find(driverConfigLoader.info.connectedHeadset) != srgbColorCorrectionMatrices.end()){
-			colorMatrix = &srgbColorCorrectionMatrices[driverConfigLoader.info.connectedHeadset];
+		if(driverConfig.customShader.srgbWhitePointCorrection && srgbColorCorrectionWithWhiteMatrices.find(driverConfigLoader.info.connectedHeadset) != srgbColorCorrectionWithWhiteMatrices.end()){
+			colorMatrix = &srgbColorCorrectionWithWhiteMatrices[driverConfigLoader.info.connectedHeadset];
+		}else{
+			if(srgbColorCorrectionMatrices.find(driverConfigLoader.info.connectedHeadset) != srgbColorCorrectionMatrices.end()){
+				colorMatrix = &srgbColorCorrectionMatrices[driverConfigLoader.info.connectedHeadset];
+			}
 		}
 		if(driverConfig.customShader.srgbColorCorrectionMatrix.size() == 9){
 			colorMatrix = &driverConfig.customShader.srgbColorCorrectionMatrix;
@@ -644,6 +674,7 @@ void ShaderReplacement::CheckSettingsThread(){
 			enabled = isNowEnabled;
 			if(isNowEnabled){
 				reloadShaders |= driverConfig.meganeX8K.subpixelShift != driverConfigOld.meganeX8K.subpixelShift;
+				reloadShaders |= driverConfig.dreamAir.subpixelShift != driverConfigOld.dreamAir.subpixelShift;
 				reloadShaders |= driverConfig.customShader.enable != driverConfigOld.customShader.enable;
 				reloadShaders |= driverConfig.customShader.contrast != driverConfigOld.customShader.contrast;
 				reloadShaders |= driverConfig.customShader.contrastMidpoint != driverConfigOld.customShader.contrastMidpoint;
@@ -660,6 +691,7 @@ void ShaderReplacement::CheckSettingsThread(){
 				reloadShaders |= driverConfig.customShader.disableMuraCorrection != driverConfigOld.customShader.disableMuraCorrection;
 				reloadShaders |= driverConfig.customShader.disableBlackLevels != driverConfigOld.customShader.disableBlackLevels;
 				reloadShaders |= driverConfig.customShader.srgbColorCorrection != driverConfigOld.customShader.srgbColorCorrection;
+				reloadShaders |= driverConfig.customShader.srgbWhitePointCorrection != driverConfigOld.customShader.srgbWhitePointCorrection;
 				reloadShaders |= driverConfig.customShader.srgbColorCorrectionMatrix.size() != driverConfigOld.customShader.srgbColorCorrectionMatrix.size();
 				reloadShaders |= driverConfig.customShader.lensColorCorrection != driverConfigOld.customShader.lensColorCorrection;
 				reloadShaders |= driverConfig.customShader.dither10Bit != driverConfigOld.customShader.dither10Bit;
